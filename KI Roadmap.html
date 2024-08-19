@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Roadmap – B2B Vertrieb</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            background-color: #f4f4f9; /* Leichtes Grau für besseren Kontrast */
+            color: #333;
+        }
+        .main-container { 
+            display: flex; 
+            flex-grow: 1; 
+            gap: 20px; /* Platz zwischen Legende und Chart */
+            margin-top: 20px;
+        }
+        .legend { 
+            width: 250px; 
+            padding-right: 20px; 
+            background-color: #fff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 15px; 
+        }
+        .legend-color { 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            margin-right: 10px; 
+        }
+        #chart-container { 
+            flex-grow: 1; 
+            position: relative; 
+            background-color: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+        }
+        .description-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .description-page.visible {
+            display: block;
+            opacity: 1;
+        }
+        .description-page h2 { 
+            margin-top: 0; 
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 40px; 
+            font-size: 0.8em; 
+            color: #888; 
+        }
+        .tables-container { 
+            display: flex; 
+            flex-direction: column; 
+            margin-top: 40px; 
+            gap: 20px; 
+        }
+        .table {
+            background-color: #fff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed; /* Fixierte Tabellenlayout für gleiche Spaltenbreiten */
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #f2f2f2; 
+            color: #333; 
+        }
+        h1.chart-title {
+            text-align: center;
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="chart-title">KI Roadmap – B2B Vertrieb</h1>
+    <div class="main-container">
+        <div class="legend">
+            <h3>Legende:</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: green;"></div>
+                <span>Interne Prozessoptimierung</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: orange;"></div>
+                <span>Strategische Entscheidungsunterstützung</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(75, 192, 192, 0.6);"></div>
+                <span>Kundenorientierte Anwendungen</span>
+            </div>
+        </div>
+        <div id="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <div id="description-container"></div>
+    <div class="tables-container">
+        <div class="table">
+            <table>
+                <tr>
+                    <th style="width: 50%;">Transformatives Potenzial</th>
+                    <th style="width: 50%;">Beschreibung</th>
+                </tr>
+                <tr>
+                    <td>Gering</td>
+                    <td>Die Anwendung hat wenig bis keinen Einfluss auf bestehende Vertriebsprozesse und -modelle.</td>
+                </tr>
+                <tr>
+                    <td>Moderat</td>
+                    <td>Die Anwendung kann bestimmte Nischenprozesse oder spezialisierte Vertriebsmodelle beeinflussen.</td>
+                </tr>
+                <tr>
+                    <td>Bedeutend</td>
+                    <td>Die Anwendung kann bestehende Vertriebsprozesse merklich verändern.</td>
+                </tr>
+                <tr>
+                    <td>Hoch</td>
+                    <td>Die Anwendung kann Vertriebsstrukturen signifikant verändern und bestehende Vertriebsmodelle herausfordern.</td>
+                </tr>
+                <tr>
+                    <td>Revolutionär</td>
+                    <td>Die Anwendung wird voraussichtlich die gesamte Vertriebslandschaft oder bestehende Modelle grundlegend verändern.</td>
+                </tr>
+            </table>
+        </div>
+        <div class="table">
+            <table>
+                <tr>
+                    <th style="width: 50%;">Nutzenpotenzial</th>
+                    <th style="width: 50%;">Beschreibung</th>
+                </tr>
+                <tr>
+                    <td>Gering</td>
+                    <td>Die Anwendung bietet einen begrenzten wirtschaftlichen Nutzen und wenig Prozessoptimierung.</td>
+                </tr>
+                <tr>
+                    <td>Moderat</td>
+                    <td>Die Anwendung bietet einen moderaten wirtschaftlichen Nutzen und verbessert einige Prozesse.</td>
+                </tr>
+                <tr>
+                    <td>Bedeutend</td>
+                    <td>Die Anwendung bietet einen deutlichen wirtschaftlichen Nutzen und optimiert wichtige Prozesse.</td>
+                </tr>
+                <tr>
+                    <td>Hoch</td>
+                    <td>Die Anwendung bietet einen erheblichen wirtschaftlichen Nutzen und verbessert viele wichtige Prozesse.</td>
+                </tr>
+                <tr>
+                    <td>Revolutionär</td>
+                    <td>Die Anwendung bietet einen außergewöhnlichen wirtschaftlichen Nutzen und optimiert nahezu alle wichtigen Prozesse.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="footer">
+        Jonathan Lüwer - Bachelorthesis zum Thema „Optimierung von B2B-Vertriebsprozessen durch den Einsatz von KI-Technologien: Anwendungsfelder, Potenziale und Herausforderungen" an der Hochschule Offenburg.
+    </div>
+
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        
+        const jitter = 0.02; // Jitter-Wert, um die Punkte leicht zu versetzen
+
+        const data = [
+            {x: 1.875, y: 3.875, label: '3.1.1', name: 'Kompetenzentwicklung', description: 'Die kontinuierliche Kompetenzentwicklung von Vertriebsmitarbeitern ist im B2B-Vertrieb entscheidend, um auf sich wandelnde Marktanforderungen und Kundenbedürfnisse flexibel reagieren zu können. KI-Technologien wie Natural Language Processing (NLP) und Machine Learning (ML) ermöglichen die personalisierte und automatisierte Erstellung von Schulungsinhalten. Diese Technologien analysieren das Lernverhalten, die bisherigen Leistungsdaten sowie spezifische Anforderungen der Mitarbeiter, um maßgeschneiderte Trainingsprogramme zu entwickeln. Darüber hinaus können KI-Systeme Lernfortschritte in Echtzeit überwachen und sofortige Rückmeldungen geben, wodurch das Lernen effizienter und zielgerichteter gestaltet wird. Die Automatisierung dieser Prozesse führt zu einer erheblichen Reduktion der manuellen Aufwände in der Schulungsverwaltung und steigert die Effektivität der Weiterbildungsmaßnahmen, was letztlich die Vertriebsleistung deutlich verbessert.', color: 'green'},
+            {x: 2, y: 2.875, label: '3.1.2', name: 'Vertriebsmitarbeiter-Unterstützung', description: 'Vertriebsmitarbeiter stehen häufig vor der Herausforderung, in Echtzeit auf eine Fülle von Kundeninformationen zugreifen zu müssen, um fundierte Entscheidungen treffen zu können. KI-gestützte Unterstützungssysteme nutzen Machine Learning (ML) und Natural Language Processing (NLP), um relevante Daten aus CRM-Systemen, E-Mails und sozialen Netzwerken zu extrahieren und zu analysieren. Diese Systeme liefern während Kundengesprächen kontextbezogene Empfehlungen, wie z.B. Produktempfehlungen, personalisierte Verkaufsargumente und Einblicke in die Kundenhistorie. Durch diese sofort verfügbaren Informationen wird die Effizienz und Effektivität von Vertriebsgesprächen gesteigert, da Vertriebsmitarbeiter besser vorbereitet sind und ihre Zeit optimal nutzen können. Dies führt zu höheren Abschlussraten und einer stärkeren Kundenbindung.', color: 'green'},
+            {x: 4.625, y: 4.625, label: '3.1.3', name: 'Automatisierung von Geschäftsprozessen', description: 'Die Automatisierung von Geschäftsprozessen durch den Einsatz von KI ist ein zentraler Hebel zur Steigerung der Effizienz im B2B-Vertrieb. Robotic Process Automation (RPA), kombiniert mit Machine Learning (ML) und Natural Language Processing (NLP), übernimmt repetitive und regelbasierte Aufgaben wie Dateneingabe, Vertragsmanagement und die Pflege von CRM-Systemen. Diese Technologien ermöglichen es, unstrukturierte Daten aus verschiedenen Quellen zu analysieren, automatische Maßnahmen zu ergreifen und Fehler in den Prozessen zu minimieren. Die Automatisierung reduziert den manuellen Arbeitsaufwand erheblich und sorgt dafür, dass Vertriebsmitarbeiter mehr Zeit für strategische und wertschöpfende Aufgaben haben. Darüber hinaus trägt sie zur Einhaltung von Compliance-Vorgaben bei, indem sie Prozesse konsistent und nachvollziehbar macht.', color: 'green'},
+            {x: 2.875, y: 4.375, label: '3.2.1', name: 'Marktanalyse und Trendprognosen', description: 'Die Marktanalyse und Trendprognosen im B2B-Vertrieb profitieren erheblich von KI-Technologien wie Predictive Analytics und Machine Learning. Durch die Analyse großer Mengen an historischen und Echtzeitdaten kann KI Muster erkennen und Vorhersagen über zukünftige Markttrends, Nachfrageveränderungen und Risiken treffen. Diese Erkenntnisse ermöglichen es Unternehmen, ihre Vertriebsstrategien proaktiv anzupassen, Ressourcen effizienter zu nutzen und neue Geschäftsmöglichkeiten zu identifizieren. Die Fähigkeit, präzise Vorhersagen zu treffen, verschafft Unternehmen einen Wettbewerbsvorteil, da sie schneller und besser informierte Entscheidungen treffen können, die ihre Position im Markt stärken.', color: 'orange'},
+			{x: 2, y: 3.25, label: '3.2.1', name: 'Lead Scoring und Priorisierung', description: 'Lead Scoring und Priorisierung sind entscheidende Prozesse im B2B-Vertrieb, die durch KI erheblich verbessert werden können. KI-Systeme analysieren historische Verkaufsdaten, Interaktionshistorien und Verhaltensmuster, um die Abschlusswahrscheinlichkeit von Leads vorherzusagen. Diese Vorhersagen basieren auf der Anwendung von Predictive Analytics, Machine Learning und Natural Language Processing. Durch die Priorisierung der vielversprechendsten Leads können Vertriebsmitarbeiter ihre Ressourcen gezielter einsetzen und die Effizienz des Vertriebsprozesses steigern. Die kontinuierliche Anpassung und Verbesserung der Scoring-Modelle führt zudem zu immer präziseren Bewertungen, was zu einer signifikanten Erhöhung der Abschlussquoten führt.', color: 'orange'},
+			{x: 3.875, y: 3.875, label: '3.2.3', name: 'Kundensegmentierung & Personalisierte Vertriebsstrategien', description: 'Die Kundensegmentierung und die Entwicklung personalisierter Vertriebsstrategien sind entscheidend, um auf die spezifischen Bedürfnisse und Verhaltensweisen von Kunden einzugehen. KI-Technologien wie Deep Learning und Explainable AI analysieren große Mengen an Kundendaten, um spezifische Segmente zu identifizieren, die ähnliche Verhaltensmuster und Präferenzen aufweisen. Diese Informationen werden genutzt, um maßgeschneiderte Vertriebsstrategien zu entwickeln, die die Wahrscheinlichkeit von Geschäftsabschlüssen erhöhen. Durch die personalisierte Ansprache und maßgeschneiderte Angebote kann die Relevanz und Effektivität von Vertriebsaktivitäten maximiert werden. Darüber hinaus ermöglicht KI eine kontinuierliche Anpassung dieser Strategien an veränderte Kundenanforderungen und Marktbedingungen.', color: 'orange'},
+			{x: 4, y: 3.375, label: '3.3.1', name: 'Personalisierte und automatisierte Kundeninteraktion', description: 'KI-Technologien revolutionieren die Art und Weise, wie Unternehmen mit ihren Kunden interagieren. Insbesondere durch den Einsatz von KI-gestützten Chatbots und Large Language Models (LLMs) können Unternehmen eine personalisierte und automatisierte Kundeninteraktion gewährleisten. Diese Systeme analysieren historische und aktuelle Kundendaten in Echtzeit, um kontextbezogene und relevante Antworten auf Kundenanfragen zu geben. Die Automatisierung solcher Interaktionen entlastet die Vertriebsmitarbeiter und ermöglicht es ihnen, sich auf komplexere Aufgaben zu konzentrieren. Gleichzeitig führt die schnelle und präzise Bearbeitung von Anfragen zu einer höheren Kundenzufriedenheit und stärkt die Kundenbindung langfristig.', color: 'rgba(75, 192, 192, 0.6)'},
+            {x: 2 + jitter, y: 2.875 + jitter, label: '3.3.2', name: 'Personalisierte Angebotsoptimierung und Preismodelle', description: 'KI bietet die Möglichkeit, personalisierte Angebote und Preismodelle zu entwickeln, die auf den spezifischen Bedürfnissen und Verhaltensmustern von Kunden basieren. Durch die Analyse von Daten über frühere Käufe, Kundenpräferenzen und Marktbedingungen können KI-Systeme optimale Preisstrategien und maßgeschneiderte Angebote generieren. Diese personalisierten Angebote erhöhen die Wahrscheinlichkeit eines Verkaufs, da sie direkt auf die individuellen Anforderungen des Kunden eingehen. Darüber hinaus können solche Systeme dynamisch auf Marktveränderungen reagieren und die Preisstrategien in Echtzeit anpassen, um die Wettbewerbsfähigkeit zu sichern und die Gewinnmargen zu maximieren.', color: 'rgba(75, 192, 192, 0.6)'},
+            {x: 1.625, y: 2.25, label: '3.3.3', name: 'Beschwerde- & Zufriedenheitsmanagement', description: 'Das Management von Kundenbeschwerden und die Sicherstellung der Kundenzufriedenheit sind wesentliche Aspekte im B2B-Vertrieb, die durch den Einsatz von KI erheblich verbessert werden können. KI-Systeme analysieren eingehende Kundenbeschwerden, klassifizieren sie nach Dringlichkeit und priorisieren sie für die Bearbeitung. Durch die Integration von Natural Language Processing (NLP) können diese Systeme die Stimmung der Kunden analysieren und die Dringlichkeit der Beschwerden einschätzen. Zudem können sie automatische Antworten generieren und die Weiterleitung an die zuständigen Abteilungen koordinieren. Dies führt zu einer schnelleren und effizienteren Bearbeitung von Beschwerden, was die Kundenzufriedenheit erhöht und das Risiko von Kundenabwanderungen reduziert.', color: 'rgba(75, 192, 192, 0.6)'},
+            {x: 4.125, y: 3.75, label: '3.3.4', name: 'Kündigungsmanagement', description: 'Im B2B-Vertrieb spielt das Kündigungsmanagement eine zentrale Rolle, um Kunden langfristig zu binden und das Risiko von Abwanderungen zu minimieren. KI-Technologien nutzen Predictive Analytics, um Kunden zu identifizieren, die ein hohes Abwanderungsrisiko aufweisen. Diese Systeme analysieren historische Daten, Kundenverhalten und Interaktionsmuster, um frühzeitig Warnsignale zu erkennen. Auf dieser Grundlage können gezielte Maßnahmen ergriffen werden, um die Kundenbindung zu stärken, wie z.B. personalisierte Angebote oder spezielle Bindungsprogramme. Durch die proaktive Ansprache gefährdeter Kunden können Unternehmen die Abwanderungsrate signifikant senken und ihre langfristige Kundenbasis sichern.', color: 'rgba(75, 192, 192, 0.6)'}
+        ];
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Innovationsgrad',
+                    data: data,
+                    backgroundColor: data.map(d => d.color),
+                    pointRadius: 8,
+                    pointHoverRadius: 10
+                }]
+            },
+            options: {
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        showDescription(data[index]);
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = data[context.dataIndex];
+                                return [point.label, point.name];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Transformatives Potenzial',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        min: 0,
+                        max: 5
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Nutzenpotenzial',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        min: 0,
+                        max: 5
+                    }
+                }
+            }
+        });
+
+        function showDescription(point) {
+            const container = document.getElementById('description-container');
+            const descriptionPage = document.createElement('div');
+            descriptionPage.className = 'description-page visible';
+            descriptionPage.innerHTML = `
+                <span class="close-btn" onclick="closeDescription()">&times;</span>
+                <h2>${point.label}: ${point.name}</h2>
+                <p>${point.description}</p>
+            `;
+            container.appendChild(descriptionPage);
+        }
+
+        function closeDescription() {
+            const descriptionPage = document.querySelector('.description-page');
+            if (descriptionPage) {
+                descriptionPage.classList.remove('visible');
+                setTimeout(() => descriptionPage.remove(), 300);
+            }
+        }
+    </script>
+</body>
+</html>
